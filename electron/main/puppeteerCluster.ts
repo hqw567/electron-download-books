@@ -9,7 +9,7 @@ const downloadsPath = app.getPath('downloads')
 const device = {
   width: 390,
   height: 844,
-  scale: 2,
+  scale: 3,
 }
 
 const iPhone12Pro = KnownDevices['iPhone 12 Pro']
@@ -111,7 +111,7 @@ const run = async (page: Page, url: string) => {
     if (currentPage > totalPage) {
       break
     }
-    await new Promise((r) => setTimeout(r, 2000))
+    await new Promise((r) => setTimeout(r, 5000))
 
     const selector = `#scalePage${currentPage - 1}`
 

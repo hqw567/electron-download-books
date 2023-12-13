@@ -14,7 +14,7 @@ function App() {
     <div className="App">
       <div className="  p-5 space-y-5">
         <div>
-          <p className=" mb-2 font-bold">请输入需要下载绘本的链接</p>
+          <p className=" mb-2 font-bold">请输入需要截图的链接</p>
           <Input
             value={value}
             onChange={(e) => {
@@ -29,7 +29,7 @@ function App() {
               ipcRenderer.send('open-kids-books-folder')
             }}
           >
-            打开下载目录
+            查看下载目录
           </Button>
           <Button
             disabled={!!!value}
@@ -42,7 +42,7 @@ function App() {
 
               ipcRenderer.send('process-url', value)
               setValue('')
-              toast.success('提交成功，请前往系统下载文件夹查看！')
+              toast.success('提交成功，请前往下载目录查看进度！')
             }}
           >
             提交任务进程

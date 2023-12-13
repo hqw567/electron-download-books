@@ -1,8 +1,8 @@
 {
   "name": "electron-download-books",
-  "version": "2.2.0",
+  "version": "0.0.1",
   "main": "dist-electron/main/index.js",
-  "description": "Download books",
+  "description": "FlipHTML5 Screenshot tool",
   "license": "MIT",
   "private": true,
   "debug": {
@@ -23,6 +23,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "electron-updater": "^6.1.7",
+    "http-proxy-agent": "^7.0.0",
     "lucide-react": "^0.294.0",
     "puppeteer": "^21.6.0",
     "puppeteer-cluster": "^0.23.0",
