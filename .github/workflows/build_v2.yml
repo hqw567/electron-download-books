@@ -1,0 +1,89 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        include:
+          - os: macos-latest
+            os_tag: macos
+          - os: ubuntu-latest
+            os_tag: ubuntu
+          - os: windows-latest
+            os_tag: windows
+      fail-fast: false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.14.7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Build Release Files
+        run: pnpm run build --filter ${{ matrix.os_tag }}
+
+      - name: Upload Artifact for Windows
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-windows
+          path: release/*.exe
+          retention-days: 1
+
+      - name: Upload Artifact for Linux
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-linux
+          path: release/*.AppImage
+          retention-days: 1
+
+      - name: Upload Artifact for macOS
+        if: matrix.os == 'macos-latest'
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-macos
+          path: release/*.dmg
+          retention-days: 1
+
+  create_release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: release-assets
+
+      - name: Prepare Release Assets
+        run: |
+          mkdir -p release-assets/${{ github.ref_name }}
+          mv release-assets/*/* release-assets/${{ github.ref_name }}/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body: Release ${{ github.ref_name }}
+          files: release-assets/${{ github.ref_name }}/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
