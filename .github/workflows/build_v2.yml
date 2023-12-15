@@ -38,10 +38,10 @@ jobs:
       - name: Build Release Files
         run: pnpm run build
 
-      - name: Prepare and Upload Artifact for macOS
-        if: matrix.os == 'macos-latest'
-        run: mv release/latest.yml release/latest-mac.yml
-        shell: bash
+      # - name: Prepare and Upload Artifact for macOS
+      #   if: matrix.os == 'macos-latest'
+      #   run: mv release/latest.yml release/latest-mac.yml
+      #   shell: bash
 
       - name: Upload Artifact for macOS
         if: matrix.os == 'macos-latest'
@@ -50,14 +50,13 @@ jobs:
           name: release-macos
           path: |
             release/*.dmg
-             release/*.tar.gz
-            release/latest-mac.yml
+            release/*.tar.gz
           retention-days: 1
 
-      - name: Prepare and Upload Artifact for Ubuntu
-        if: matrix.os == 'ubuntu-latest'
-        run: mv release/latest.yml release/latest-linux.yml
-        shell: bash
+      # - name: Prepare and Upload Artifact for Ubuntu
+      #   if: matrix.os == 'ubuntu-latest'
+      #   run: mv release/latest.yml release/latest-linux.yml
+      #   shell: bash
 
       - name: Upload Artifact for Ubuntu
         if: matrix.os == 'ubuntu-latest'
@@ -67,14 +66,13 @@ jobs:
           path: |
             release/*.AppImage
             release/*.deb
-            release/*.tar.gz  
-            release/latest-linux.yml
+            release/*.tar.gz
           retention-days: 1
 
-      - name: Prepare and Upload Artifact for Windows
-        if: matrix.os == 'windows-latest'
-        run: mv release/latest.yml release/latest-windows.yml
-        shell: bash
+      # - name: Prepare and Upload Artifact for Windows
+      #   if: matrix.os == 'windows-latest'
+      #   run: mv release/latest.yml release/latest-windows.yml
+      #   shell: bash
 
       - name: Upload Artifact for Windows
         if: matrix.os == 'windows-latest'
@@ -85,7 +83,6 @@ jobs:
             release/*.exe
             release/*.msi
             release/*.zip
-            release/latest-windows.yml
           retention-days: 1
 
   create_release:
