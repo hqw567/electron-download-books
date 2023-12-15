@@ -4,7 +4,7 @@
   "main": "dist-electron/main/index.js",
   "description": "FlipHTML5 Screenshot tool",
   "license": "MIT",
-  "author": "Herway",
+  "author": "Herway <hqw6@qq.com>",
   "private": true,
   "debug": {
     "env": {

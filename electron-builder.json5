@@ -22,7 +22,6 @@
     ],
     artifactName: '${productName}-Mac-${version}-${arch}.${ext}',
   },
-
   win: {
     target: [
       {
@@ -49,6 +48,7 @@
   linux: {
     target: ['deb', 'AppImage', 'tar.gz'],
     artifactName: '${productName}-Linux-${version}-${arch}.${ext}',
+    maintainer: 'Herway <hqw6@qq.com>',
   },
   publish: {
     provider: 'generic',
