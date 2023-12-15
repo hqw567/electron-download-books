@@ -6,8 +6,6 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-    permissions:
-      contents: write
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
@@ -67,6 +65,8 @@ jobs:
   create_release:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v3
