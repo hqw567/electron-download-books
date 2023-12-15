@@ -5,7 +5,7 @@
   appId: 'io.icepoint.aigc',
   asar: true,
   directories: {
-    output: 'release/${version}',
+    output: 'release',
   },
   files: ['dist-electron', 'dist'],
   extraFiles: ['node_modules/puppeteer/.local-chromium/**/*'],
