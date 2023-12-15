@@ -56,8 +56,7 @@ jobs:
         run: |
           VERSION=${{ steps.get_version.outputs.VERSION }}
           mkdir -p release-assets
-          cp release/$VERSION/*.{exe,dmg,.AppImage} release-assets/
-
+          find release/$VERSION -type f \( -name "*.dmg" -o -name "*.AppImage" -o -name "*.exe" -o -name "*.zip" \) -exec cp {} release-assets/ \;
         shell: bash
 
       - name: Create Release
