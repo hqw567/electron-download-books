@@ -10,17 +10,35 @@
   files: ['dist-electron', 'dist'],
   extraFiles: ['node_modules/puppeteer/.local-chromium/**/*'],
   mac: {
-    target: ['dmg'],
-    artifactName: '${productName}-Mac-${version}-Installer.${ext}',
+    target: [
+      {
+        target: 'dmg',
+        arch: ['x64', 'arm64'],
+      },
+      {
+        target: 'tar.gz',
+        arch: ['x64', 'arm64'],
+      },
+    ],
+    artifactName: '${productName}-Mac-${version}-${arch}.${ext}',
   },
+
   win: {
     target: [
       {
         target: 'nsis',
         arch: ['x64'],
       },
+      {
+        target: 'msi',
+        arch: ['x64'],
+      },
+      {
+        target: 'zip',
+        arch: ['x64'],
+      },
     ],
-    artifactName: '${productName}-Windows-${version}-Setup.${ext}',
+    artifactName: '${productName}-Windows-${version}-${arch}.${ext}',
   },
   nsis: {
     oneClick: false,
@@ -29,8 +47,8 @@
     deleteAppDataOnUninstall: false,
   },
   linux: {
-    target: ['AppImage'],
-    artifactName: '${productName}-Linux-${version}.${ext}',
+    target: ['deb', 'AppImage', 'tar.gz'],
+    artifactName: '${productName}-Linux-${version}-${arch}.${ext}',
   },
   publish: {
     provider: 'generic',
