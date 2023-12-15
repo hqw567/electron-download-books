@@ -5,6 +5,7 @@ import fs from 'fs'
 import { update } from './update'
 import { closePuppeteerCluster, createPuppeteerCluster, defaultClusterOptions } from './puppeteerCluster'
 import { Cluster } from 'puppeteer-cluster'
+import logger from './logger'
 
 // The built directory structure
 //
@@ -38,7 +39,7 @@ if (!app.requestSingleInstanceLock()) {
 // Read more on https://www.electronjs.org/docs/latest/tutorial/security
 // process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'
 
-let win: BrowserWindow | null = null
+export let win: BrowserWindow | null = null
 // Here, you can also use other preload
 const preload = join(__dirname, '../preload/index.js')
 const url = process.env.VITE_DEV_SERVER_URL
@@ -87,10 +88,14 @@ async function createWindow() {
 
   // 监听来自渲染器进程的 URL 提交
   ipcMain.on('process-url', async (event, url) => {
-    if (!cluster) cluster = await createPuppeteerCluster(defaultClusterOptions)
-
-    // 将 URL 添加到 Cluster 队列
-    cluster.queue(url)
+    try {
+      if (!cluster) cluster = await createPuppeteerCluster(defaultClusterOptions)
+      logger.info(`添加任务成功`, { url })
+      // 将 URL 添加到 Cluster 队列
+      cluster.queue(url)
+    } catch (error: any) {
+      logger.error(`任务失败:${error.message}`, { url, stack: error.stack })
+    }
   })
 
   ipcMain.on('start-puppeteer-cluster', async (event, url) => {
@@ -101,14 +106,14 @@ async function createWindow() {
   ipcMain.on('close-puppeteer-cluster', async (event, url) => {
     // 关闭实例
     if (cluster) {
+      await closePuppeteerCluster(cluster)
       cluster = null
-      closePuppeteerCluster(cluster)
     }
   })
 
   ipcMain.on('open-kids-books-folder', async (event) => {
     const downloadsPath = app.getPath('downloads')
-    const targetPath = path.join(downloadsPath, 'iceCoffee/kids-books')
+    const targetPath = path.join(downloadsPath, 'iceCoffee/book')
 
     // 检查目录是否存在，如果不存在则递归创建目录
     if (!fs.existsSync(targetPath)) {
