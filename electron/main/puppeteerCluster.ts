@@ -14,9 +14,6 @@ const device = {
 
 // const iPhone12Pro = KnownDevices['iPhone 12 Pro']
 const iPhone12Pro = puppeteer.devices['iPhone 6']
-function getChromiumExecPath() {
-  return puppeteer.executablePath().replace('app.asar', 'app.asar.unpacked')
-}
 
 const run = async (page: Page, url: string) => {
   await page.emulate(iPhone12Pro)
@@ -207,7 +204,9 @@ function updatePageParam(url: string, newPageNumber: number) {
     return url.includes('#') ? `${url}p=${newPageNumber}` : `${url}#p=${newPageNumber}`
   }
 }
-
+function getChromiumExecPath() {
+  return puppeteer.executablePath().replace('app.asar', 'app.asar.unpacked')
+}
 const defaultClusterOptions = {
   concurrency: Cluster.CONCURRENCY_CONTEXT,
   maxConcurrency: 2,
@@ -219,6 +218,7 @@ const defaultClusterOptions = {
     headless: true,
     defaultViewport: null,
     args: [
+      '--no-zygote', // 禁用zygote进程,因为它会导致一些问题
       `--window-size=${device.width * 2},${device.height * 2}`,
       '--disable-extensions', // 禁用扩展,减少不必要的资源占用
       '--disable-gpu', // 禁用GPU加速,对于无头(headless)模式通常没有影响,但有时有助于避免某些问题
