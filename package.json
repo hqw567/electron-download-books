@@ -2,7 +2,7 @@
   "name": "electron-download-books",
   "version": "0.2.3",
   "main": "dist-electron/main/index.js",
-  "description": "FlipHTML5 Screenshot tool",
+  "description": "FlipHTML5 Screenshot Tool",
   "license": "MIT",
   "author": {
     "name": "Herway",
