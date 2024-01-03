@@ -1,19 +1,20 @@
 import { app, ipcMain } from 'electron'
-import {
-  type ProgressInfo,
-  type UpdateDownloadedEvent,
-  autoUpdater
-} from 'electron-updater'
+import { type ProgressInfo, type UpdateDownloadedEvent, autoUpdater } from 'electron-updater'
+
+Object.defineProperty(app, 'isPackaged', {
+  get() {
+    return true
+  },
+})
 
 export function update(win: Electron.BrowserWindow) {
-
   // When set to false, the update download will be triggered through the API
   autoUpdater.autoDownload = false
   autoUpdater.disableWebInstaller = false
   autoUpdater.allowDowngrade = false
 
   // start check
-  autoUpdater.on('checking-for-update', function () { })
+  autoUpdater.on('checking-for-update', function () {})
   // update available
   autoUpdater.on('update-available', (arg) => {
     win.webContents.send('update-can-available', { update: true, version: app.getVersion(), newVersion: arg?.version })
@@ -31,6 +32,15 @@ export function update(win: Electron.BrowserWindow) {
     }
 
     try {
+      const res = await fetch('https://api.github.com/repos/hqw567/electron-download-books/releases/latest').then(
+        (res) => res.json(),
+      )
+      const version = res.tag_name
+      autoUpdater.setFeedURL({
+        provider: 'generic',
+        channel: 'latest',
+        url: `https://github.com/hqw567/electron-download-books/releases/download/${version}/`,
+      })
       return await autoUpdater.checkForUpdatesAndNotify()
     } catch (error) {
       return { message: 'Network error', error }
@@ -52,7 +62,7 @@ export function update(win: Electron.BrowserWindow) {
       () => {
         // feedback update downloaded message
         event.sender.send('update-downloaded')
-      }
+      },
     )
   })
 
@@ -66,8 +76,8 @@ function startDownload(
   callback: (error: Error | null, info: ProgressInfo | null) => void,
   complete: (event: UpdateDownloadedEvent) => void,
 ) {
-  autoUpdater.on('download-progress', info => callback(null, info))
-  autoUpdater.on('error', error => callback(error, null))
+  autoUpdater.on('download-progress', (info) => callback(null, info))
+  autoUpdater.on('error', (error) => callback(error, null))
   autoUpdater.on('update-downloaded', complete)
   autoUpdater.downloadUpdate()
 }
