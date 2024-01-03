@@ -1,6 +1,6 @@
 {
   "name": "electron-download-books",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "main": "dist-electron/main/index.js",
   "description": "FlipHTML5 Screenshot Tool",
   "license": "MIT",
