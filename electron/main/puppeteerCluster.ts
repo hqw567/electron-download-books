@@ -12,10 +12,15 @@ const device = {
   scale: 4,
 }
 
+let isStop = false
+
 // const iPhone12Pro = KnownDevices['iPhone 12 Pro']
 const iPhone12Pro = puppeteer.devices['iPhone 6']
 
 const run = async (page: Page, url: string) => {
+  if (isStop) {
+    return
+  }
   await page.emulate(iPhone12Pro)
   await page.setViewport({
     width: device.width,
@@ -119,13 +124,16 @@ const run = async (page: Page, url: string) => {
 
   await page.addStyleTag({
     content: `
-    [class*="Shadow"], [class*="shadow"] {
+    [class*="Shadow"], [class*="shadow"],[class*="flip_button"],.clickToRead,.bottomBar,.topRightBar,.thumbnail_progress {
       display: none !important;
     }
   `,
   })
 
   while (true) {
+    if (isStop) {
+      break
+    }
     if (currentPage > totalPage) {
       logger.info(`任务完成`, { url: page.url(), title })
       break
@@ -144,6 +152,7 @@ const run = async (page: Page, url: string) => {
           currentPage++
         },
         onFail: async (error) => {
+          if (isStop) return
           if (retries < maxRetries) {
             logger.warn(`第${currentPage}页截图失败，正在重试第${retries + 1}次`, {
               url: page.url(),
@@ -235,6 +244,7 @@ const defaultClusterOptions = {
 }
 
 async function createPuppeteerCluster(options = defaultClusterOptions) {
+  isStop = false
   const cluster = await Cluster.launch(options)
 
   await cluster.task(async ({ page, data: url }) => {
@@ -242,6 +252,7 @@ async function createPuppeteerCluster(options = defaultClusterOptions) {
   })
 
   cluster.on('taskerror', (err, data, willRetry) => {
+    if (isStop) return
     if (willRetry) {
       logger.info(`任务执行失败,正在重新尝试`, { url: data, message: err.message, stack: err.stack })
     } else {
@@ -254,6 +265,7 @@ async function createPuppeteerCluster(options = defaultClusterOptions) {
 // 关闭集群
 async function closePuppeteerCluster(cluster: Cluster) {
   // await cluster.idle()
+  isStop = true
   await cluster.close()
   logger.info(`所有任务已停止`)
 }
