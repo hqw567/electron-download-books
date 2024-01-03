@@ -2,6 +2,8 @@ name: Build and Release
 
 on:
   push:
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -61,10 +63,10 @@ jobs:
             release/latest-linux.yml
           retention-days: 1
 
-      - name: Prepare and Upload Artifact for Windows
-        if: matrix.os == 'windows-latest'
-        run: mv release/latest.yml release/latest-windows.yml
-        shell: bash
+      # - name: Prepare and Upload Artifact for Windows
+      #   if: matrix.os == 'windows-latest'
+      #   run: mv release/latest.yml release/latest-windows.yml
+      #   shell: bash
 
       - name: Upload Artifact for Windows
         if: matrix.os == 'windows-latest'
@@ -75,7 +77,7 @@ jobs:
             release/*.exe
             release/*.msi
             release/*.zip
-            release/latest-windows.yml
+            release/latest.yml
           retention-days: 1
 
   create_release:

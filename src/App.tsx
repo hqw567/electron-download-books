@@ -77,6 +77,7 @@ function App() {
           >
             清空日志
           </Button>
+          <UpdateElectron />
         </div>
       </div>
       <div className=" p-5  flex-1  space-y-2 divide-y divide-primary/50 overflow-auto  bg-primary/80">
